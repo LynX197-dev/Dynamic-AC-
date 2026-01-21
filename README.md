@@ -23,6 +23,9 @@ Server administrators can define responses to cheating behaviors, including warn
 ### Message Customization
 Allows full control over messages sent to players, flagged offenders, and moderators, ensuring clear communication and community awareness.
 
+## Requirements
+- ProtocolLib
+
 ### Lightweight and Modular
 Designed to keep the server overhead low, with features and notifications that can be enabled or disabled via easy-to-edit configurations.
 
