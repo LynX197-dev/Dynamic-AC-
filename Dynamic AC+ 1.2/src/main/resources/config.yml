@@ -1,0 +1,195 @@
+# ============================================================================
+# Dynamic AC+ by LynX - Advanced Anti-Cheat Configuration
+# ============================================================================
+# This configuration file allows you to customize the behavior of Dynamic AC+.
+# Features can be enabled/disabled independently for flexibility.
+# Restart or reload the plugin after making changes (/ac reload).
+#
+# Placeholders:
+# %player% - Player name
+# %reason% - Detection reason
+# %time% - Remaining time (for bans/cooldowns)
+# %ip% - Player IP (for alt detection)
+# ============================================================================
+
+# ============================================================================
+# GENERAL SETTINGS
+# ============================================================================
+# Enable or disable core anti-cheat features
+general:
+  # Anti-Xray Detection: Monitors for suspicious mining patterns
+  anti-xray:
+    enabled: true
+    # Sensitivity level (1-10, higher = more sensitive)
+    sensitivity: 5
+    # Minimum blocks mined before checking
+    min-blocks: 100
+    # Action on detection: warn, kick, ban, tempban
+    action: warn
+    # Temp ban duration in minutes (if action is tempban)
+    temp-ban-duration: 30
+
+  # Speed/Fly/Movement Hacks: Detects anomalous player movement
+  movement-detection:
+    enabled: true
+    sensitivity: 7
+    # Maximum allowed speed multiplier
+    max-speed-multiplier: 1.2
+    action: kick
+    temp-ban-duration: 15
+
+  # Combat Hacks: Detects auto-clickers, reach hacks, etc.
+  combat-detection:
+    enabled: true
+    sensitivity: 6
+    # Maximum allowed CPS (clicks per second)
+    max-cps: 20
+    # Reach distance threshold
+    max-reach: 3.5
+    action: tempban
+    temp-ban-duration: 60
+
+  # Server Performance Monitoring: Tracks TPS and player activity
+  performance-monitoring:
+    enabled: true
+    # Minimum TPS before triggering alerts
+    min-tps-alert: 15.0
+    # Enable automatic lag detection
+    auto-lag-detection: true
+
+  # Login Security: Protects against coordinate leaks with authentication
+  login-security:
+    enabled: true
+
+  # Kick flagged players on join: Automatically kick players with prior hack detections
+  kick-flagged-on-join:
+    enabled: true
+
+# ============================================================================
+# COMBAT-LOG MONITORING
+# ============================================================================
+combat-log:
+  enabled: true
+  # Cooldown period in seconds before combat-log is penalized
+  cooldown: 10
+  # BossBar display settings
+  bossbar:
+    enabled: true
+    # BossBar color (BLUE, GREEN, PINK, PURPLE, RED, WHITE, YELLOW)
+    color: RED
+    # BossBar style (PROGRESS, NOTCHED_6, NOTCHED_10, NOTCHED_12, NOTCHED_20)
+    style: PROGRESS
+    # Custom title for BossBar (%time% placeholder available)
+    title: "&cCombat Cooldown: %time%s remaining"
+  # Action on combat-log: kill, tempban, ban
+  action: kill
+  # Temp ban duration in minutes (if action is tempban)
+  temp-ban-duration: 10
+  # Damage threshold to trigger combat-log tracking
+  damage-threshold: 1.0
+
+# ============================================================================
+# ALT-ACCOUNT DETECTION
+# ============================================================================
+alt-detection:
+  enabled: true
+  # Action on alt detection: notify, warn, kick, ban
+  action: notify
+  # Notify only ops (true) or broadcast to all (false)
+  ops-only: true
+  # Maximum accounts per IP before flagging
+  max-accounts-per-ip: 2
+  # Enable IP-based tracking
+  track-ips: true
+  # Privacy: Store IPs hashed (true) or plain (false)
+  hash-ips: true
+  # Alert message for alts (%accounts% shows number of alts)
+  alert-message: "&ePlayer %player% may have %accounts% alt accounts!"
+
+# ============================================================================
+# THRESHOLDS & PUNISHMENT SYSTEM
+# ============================================================================
+punishment:
+  # Repeat offense escalation
+  repeat-offenses:
+    enabled: true
+    # Maximum offenses before permanent ban
+    max-offenses: 3
+    # Escalation levels (offense count -> action)
+    escalation:
+      1: warn
+      2: kick
+      3: tempban
+      4: ban
+    # Base temp ban duration (multiplied by offense count)
+    base-temp-ban: 30  # minutes
+    # Cooldown between offenses (minutes)
+    offense-cooldown: 5
+
+  # Global punishment settings
+  global:
+    # Enable temporary bans
+    temp-bans: true
+    # Default temp ban duration (minutes)
+    default-temp-ban: 60
+    # Ban command (use %player% and %reason%)
+    ban-command: "ban %player% %reason%"
+    # Temp ban command
+    temp-ban-command: "tempban %player% %time%m %reason%"
+    # Enable command logging
+    log-commands: true
+
+# ============================================================================
+# MESSAGING & NOTIFICATIONS
+# ============================================================================
+messages:
+  # Player messages (sent to cheating player)
+  player:
+    warn: "&c[AC] &fWarning: Suspicious activity detected! This is your first offense."
+    kick: "&c[AC] &fYou have been kicked for cheating: %reason%"
+    ban: "&c[AC] &fYou have been permanently banned for repeated cheating."
+    tempban: "&c[AC] &fTemporarily banned for %time% minutes: %reason%"
+
+  # Public alerts (broadcast to all players)
+  public:
+    alert: "&e[AC] &fPlayer %player% has been flagged for cheating!"
+    combat-log: "&c[AC] &fPlayer %player% combat-logged and was penalized!"
+    alt-detected: "&e[AC] &fPossible alt account detected for %player%!"
+
+  # Operator notifications (private messages to ops/perms)
+  operator:
+    notify: "&c[AC] &fPlayer %player% flagged: %reason% at %location%"
+    combat-log: "&c[AC] &fCombat-log: %player% disconnected during combat"
+    alt-alert: "&c[AC] &fAlt detected: %player% (%ip%) has %accounts% accounts"
+    performance: "&e[AC] &fServer TPS dropped to %.2f - Possible lag or attack"
+
+
+
+# ============================================================================
+# ADMIN & DEBUG SETTINGS
+# ============================================================================
+admin:
+  # Enable debug mode (logs extra info to console)
+  debug-mode: false
+  # Log all detections to file
+  log-detections: true
+  # Auto-save evidence every X minutes
+  auto-save-interval: 5
+  # Maximum evidence entries per player
+  max-evidence-per-player: 50
+  # Enable API for other plugins
+  enable-api: false
+
+# ============================================================================
+# INTEGRATIONS
+# ============================================================================
+integrations:
+  # Vault integration for permissions/economy
+  vault:
+    enabled: true
+  # PlaceholderAPI support
+  placeholderapi:
+    enabled: true
+  # LuckPerms integration
+  luckperms:
+    enabled: true
