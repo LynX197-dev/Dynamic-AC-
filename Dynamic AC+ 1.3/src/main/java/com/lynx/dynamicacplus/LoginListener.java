@@ -16,6 +16,10 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryOpenEvent;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 
 public class LoginListener implements Listener {
    private final DynamicACPlus plugin;
@@ -35,6 +39,8 @@ public class LoginListener implements Listener {
          this.originalLocations.put(player, player.getLocation());
          player.teleport(safeLoc);
       }
+
+      player.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, Integer.MAX_VALUE, 1));
 
       if (this.plugin.getPasswordManager().isRegistered(player.getUniqueId())) {
          player.sendMessage("§cPlease login with /login <password>");
@@ -63,7 +69,7 @@ public class LoginListener implements Listener {
    @EventHandler
    public void onEntityDamage(EntityDamageEvent event) {
       if (event.getEntity() instanceof Player) {
-         Player player = (Player)event.getEntity();
+         Player player = (Player) event.getEntity();
          if (!this.loggedInPlayers.contains(player)) {
             event.setCancelled(true);
          }
@@ -91,9 +97,31 @@ public class LoginListener implements Listener {
 
    }
 
+   @EventHandler
+   public void onInventoryClick(InventoryClickEvent event) {
+      if (event.getWhoClicked() instanceof Player) {
+         Player player = (Player) event.getWhoClicked();
+         if (!this.loggedInPlayers.contains(player)) {
+            event.setCancelled(true);
+            player.closeInventory();
+         }
+      }
+   }
+
+   @EventHandler
+   public void onInventoryOpen(InventoryOpenEvent event) {
+      if (event.getPlayer() instanceof Player) {
+         Player player = (Player) event.getPlayer();
+         if (!this.loggedInPlayers.contains(player)) {
+            event.setCancelled(true);
+         }
+      }
+   }
+
    public void loginPlayer(Player player) {
       this.loggedInPlayers.add(player);
-      Location original = (Location)this.originalLocations.get(player);
+      player.removePotionEffect(PotionEffectType.BLINDNESS);
+      Location original = (Location) this.originalLocations.get(player);
       if (original != null) {
          player.teleport(original);
          this.originalLocations.remove(player);
@@ -107,6 +135,11 @@ public class LoginListener implements Listener {
       int z = 0;
       int y = world.getHighestBlockYAt(x, z);
       Block block = world.getBlockAt(x, y, z);
-      return block.getType().isSolid() ? new Location(world, (double)x, (double)(y + 1), (double)z) : new Location(world, (double)x, 64.0D, (double)z);
+      return block.getType().isSolid() ? new Location(world, (double) x, (double) (y + 1), (double) z)
+            : new Location(world, (double) x, 64.0D, (double) z);
+   }
+
+   public boolean isLoggedIn(Player player) {
+      return this.loggedInPlayers.contains(player);
    }
 }
